@@ -17,3 +17,7 @@ It leverages modern web technologies, including Bootstrap for design and respons
 The project is containerised using Docker, allowing for easy deployment and scalability. The repository also includes a docker-compose configuration to facilitate a smooth setup process.
 
 Contributions are welcome, and we encourage the community to submit issues, suggestions, and improvements.
+
+***Upcoming Feature***
+- Ai Integration that will tranform how you will interact with your pdf
+- mobile app 
