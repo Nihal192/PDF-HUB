@@ -9,6 +9,7 @@ Transform your static PDF documents into editable Word files, preserving the ori
 **PDF Splitting:** Divide large PDF files into smaller, more manageable sections, specifying the range of pages to include in each output file.
 
 **PDF Merging:** Combine multiple PDF documents into a single file, streamlining the process of consolidating information.
+**Image to PDF:** Upload one or more images and convert them into a single PDF document.
 
 This application is built to be user-friendly and responsive, ensuring a seamless experience across different devices. 
 
