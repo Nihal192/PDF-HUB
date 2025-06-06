@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 import os
 from PyPDF2 import PdfReader, PdfWriter
 from pdf2docx import Converter
+from PIL import Image
 
 app = Flask(__name__)
 app.secret_key = 'change-this-secret-key'
@@ -14,11 +15,15 @@ USERS = {
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf'}
+ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def allowed_image(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_IMAGE_EXTENSIONS
 
 def login_required(f):
     @wraps(f)
@@ -174,11 +179,46 @@ def merge_pdf():
                 pdf_writer.write(merged_pdf)
             
             return render_template('merge_pdf_download.html', filename=merged_filename)
-        
+
         except Exception as e:
             return f"An error occurred during PDF processing: {str(e)}", 500
 
     return 'Invalid file type', 400
+
+@app.route('/image-to-pdf', methods=['GET'])
+@login_required
+def image_to_pdf_form():
+    return render_template('image_to_pdf_form.html')
+
+@app.route('/image-to-pdf', methods=['POST'])
+@login_required
+def convert_images_to_pdf():
+    if 'images' not in request.files:
+        return 'No file part', 400
+
+    files = request.files.getlist('images')
+    if not files:
+        return 'No selected file', 400
+
+    images = []
+    for file in files:
+        if file.filename == '' or not allowed_image(file.filename):
+            return 'Invalid file type', 400
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        img = Image.open(filepath).convert('RGB')
+        images.append(img)
+
+    if not images:
+        return 'No valid images', 400
+
+    pdf_filename = 'images_combined.pdf'
+    pdf_filepath = os.path.join(app.config['UPLOAD_FOLDER'], pdf_filename)
+    first_image, *rest = images
+    first_image.save(pdf_filepath, save_all=True, append_images=rest)
+
+    return render_template('image_to_pdf_download.html', filename=pdf_filename)
 
 @app.route('/download/<filename>', methods=['GET'])
 @login_required
