@@ -1,10 +1,16 @@
-from flask import Flask, request, send_file, render_template, redirect, url_for
+from flask import Flask, request, send_file, render_template, redirect, url_for, session
+from functools import wraps
 from werkzeug.utils import secure_filename
 import os
 from PyPDF2 import PdfReader, PdfWriter
 from pdf2docx import Converter
 
 app = Flask(__name__)
+app.secret_key = 'change-this-secret-key'
+
+USERS = {
+    'admin': 'password'
+}
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf'}
@@ -14,15 +20,44 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if username in USERS and USERS[username] == password:
+            session['username'] = username
+            return redirect(url_for('home'))
+        return render_template('login.html', error='Invalid credentials')
+    return render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('login'))
+
 @app.route('/')
+@login_required
 def home():
     return render_template('index.html')
 
 @app.route('/pdf-to-word', methods=['GET'])
+@login_required
 def pdf_to_word():
     return render_template('pdf_to_word_form.html')
 
 @app.route('/convert-pdf-to-word', methods=['POST'])
+@login_required
 def convert_pdf_to_word():
     if 'file' not in request.files:
         return 'No file part', 400
@@ -48,10 +83,12 @@ def convert_pdf_to_word():
     return 'Invalid file type', 400
 
 @app.route('/split-pdf', methods=['GET'])
+@login_required
 def split_pdf_form():
     return render_template('split_pdf_form.html')
 
 @app.route('/split-pdf', methods=['POST'])
+@login_required
 def split_pdf_upload():
     if 'file' not in request.files:
         return 'No file part', 400
@@ -92,10 +129,12 @@ def split_pdf_upload():
     return 'Invalid file type', 400
 
 @app.route('/merge-pdf', methods=['GET'])
+@login_required
 def merge_pdf_form():
     return render_template('merge_pdf_form.html')
 
 @app.route('/merge-pdf', methods=['POST'])
+@login_required
 def merge_pdf():
     if 'file1' not in request.files or 'file2' not in request.files:
         return 'No file part', 400
@@ -142,6 +181,7 @@ def merge_pdf():
     return 'Invalid file type', 400
 
 @app.route('/download/<filename>', methods=['GET'])
+@login_required
 def download_file(filename):
     return send_file(os.path.join(app.config['UPLOAD_FOLDER'], filename), as_attachment=True)
 
