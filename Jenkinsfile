@@ -162,13 +162,4 @@ pipeline {
             echo "✗ Pipeline failed - Check logs above"
         }
     }
-            }
-        }
-    }
-
-    post {
-        always {
-            echo 'Pipeline complete.'
-        }
-    }
 }
