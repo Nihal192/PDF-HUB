@@ -1,0 +1,12 @@
+# Production dependencies
+Flask
+Werkzeug
+pdf2docx
+PyPDF2
+
+# Development & Testing
+pytest
+pytest-cov
+black
+flake8
+pylint

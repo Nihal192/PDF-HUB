@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Tools</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .tool-card {
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        .tool-card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .icon-container {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h1 class="text-center mb-4">PDF Tools</h1>
+        <p class="text-center mb-5">Select a tool below to get started with your PDF files:</p>
+        
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col">
+                <div class="card h-100 tool-card">
+                    <div class="card-body text-center">
+                        <div class="icon-container bg-primary mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        </div>
+                        <h5 class="card-title">PDF to Word</h5>
+                        <p class="card-text">Convert PDF files to editable Word documents</p>
+                        <button class="btn btn-primary mt-3" onclick="selectTool('PDF to Word'); location.href='{{ url_for('pdf_to_word') }}';">Select</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 tool-card">
+                    <div class="card-body text-center">
+                        <div class="icon-container bg-success mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-scissors"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+                        </div>
+                        <h5 class="card-title">Split PDF</h5>
+                        <p class="card-text">Divide a PDF into multiple files</p>
+                        <button class="btn btn-success mt-3" onclick="window.location.href='{{ url_for('split_pdf_form') }}';">Select</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 tool-card">
+                    <div class="card-body text-center">
+                        <div class="icon-container bg-warning mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                        </div>
+                        <h5 class="card-title">Merge PDF</h5>
+                        <p class="card-text">Combine multiple PDF files into one</p>
+                        <button class="btn btn-warning mt-3" onclick="location.href='{{ url_for('merge_pdf_form') }}';">Select</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="selectedToolInfo" class="mt-5 text-center" style="display: none;">
+            <h2>Selected Tool: <span id="selectedToolName"></span></h2>
+            <p>Here you would typically render the corresponding tool component or navigate to its page.</p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function selectTool(toolName) {
+            document.getElementById('selectedToolInfo').style.display = 'block';
+            document.getElementById('selectedToolName').textContent = toolName;
+            // Here you would typically navigate to the tool's page or load its component
+            console.log('Selected tool:', toolName);
+        }
+    </script>
+</body>
+</html>

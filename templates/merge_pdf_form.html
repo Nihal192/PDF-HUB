@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+        }
+        .merge-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #fbff00;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .file-upload-wrapper {
+            position: relative;
+            text-align: center;
+            padding: 20px;
+            border: 2px dashed #fff200;
+            border-radius: 5px;
+            background-color: #f1f8ff;
+            transition: all 0.3s ease;
+        }
+        .file-upload-wrapper:hover {
+            background-color: #e6f2ff;
+        }
+        #file1-chosen, #file2-chosen {
+            margin-top: 10px;
+            font-style: italic;
+        }
+        .progress {
+            display: none;
+            margin-top: 20px;
+        }
+        #submit-btn {
+            display: block;
+            margin-top: 20px;
+            background-color: #ffff00; /* Yellow */
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: #333; /* Dark gray */
+        }
+        #submit-btn:hover {
+            background-color: #cccc00; /* Darker yellow */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="merge-container">
+            <h1>MERGE PDF</h1>
+            <p class="text-center mb-4">Merge multiple PDF files into one</p>
+            <form id="merge-form" method="post" enctype="multipart/form-data" action="{{ url_for('merge_pdf') }}">
+                <div class="file-upload-wrapper">
+                    <label for="file1-upload" class="btn btn-primary">
+                        Choose File 1
+                    </label>
+                    <input id="file1-upload" type="file" name="file1" style="display: none;" required>
+                    <div id="file1-chosen">No file chosen</div>
+                </div>
+                <div class="file-upload-wrapper">
+                    <label for="file2-upload" class="btn btn-primary">
+                        Choose File 2
+                    </label>
+                    <input id="file2-upload" type="file" name="file2" style="display: none;" required>
+                    <div id="file2-chosen">No file chosen</div>
+                </div>
+                <button id="submit-btn" type="submit" class="btn"><b>Merge PDF</b></button>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const file1Upload = document.getElementById('file1-upload');
+        const file1Chosen = document.getElementById('file1-chosen');
+        const file2Upload = document.getElementById('file2-upload');
+        const file2Chosen = document.getElementById('file2-chosen');
+        const submitBtn = document.getElementById('submit-btn');
+        const progressBar = document.querySelector('.progress-bar');
+        const progressContainer = document.querySelector('.progress');
+        const mergeForm = document.getElementById('merge-form');
+
+        file1Upload.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                file1Chosen.textContent = this.files[0].name;
+            } else {
+                file1Chosen.textContent = 'No file chosen';
+            }
+        });
+
+        file2Upload.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                file2Chosen.textContent = this.files[0].name;
+            } else {
+                file2Chosen.textContent = 'No file chosen';
+            }
+        });
+
+        mergeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            progressContainer.style.display = 'block';
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = progress + '%';
+                progressBar.setAttribute('aria-valuenow', progress);
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    // Submit the form
+                    mergeForm.submit();
+                }
+            }, 200);
+        });
+    </script>
+</body>
+</html>

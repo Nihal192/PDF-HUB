@@ -1,0 +1,15 @@
+[Unit]
+Description=PDF-HUB Flask Application
+After=network.target
+
+[Service]
+Type=simple
+User=appuser
+WorkingDirectory=/opt/pdf-hub/current
+Environment="PATH=/opt/pdf-hub/current/venv/bin"
+ExecStart=/opt/pdf-hub/current/venv/bin/python app.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
