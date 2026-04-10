@@ -153,7 +153,17 @@ pipeline {
 
     post {
         always {
-            cleanWs()
+            script {
+                // Ensure cleanup has a workspace (FilePath) context.
+                try {
+                    cleanWs()
+                } catch (err) {
+                    echo "Workspace cleanup needs a node context; retrying in node. Error: ${err}"
+                    node {
+                        cleanWs()
+                    }
+                }
+            }
         }
         success {
             echo "✓ Pipeline completed successfully"
